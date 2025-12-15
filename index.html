@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>庫存管理系統 - 主頁面</title>
+    <title>庫存管理系統 - 表格版</title>
     <style>
         * {
             margin: 0;
@@ -20,7 +20,7 @@
         }
         
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             background-color: white;
             border-radius: 10px;
@@ -43,12 +43,29 @@
             border-bottom: 1px solid #eee;
         }
         
-        .search-section, .product-section, .inventory-section {
+        .filter-section {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
             margin-bottom: 30px;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .filter-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 15px;
+        }
+        
+        @media (max-width: 768px) {
+            .filter-row {
+                grid-template-columns: 1fr;
+            }
         }
         
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 0;
         }
         
         label {
@@ -60,10 +77,10 @@
         
         select, input[type="text"], input[type="number"] {
             width: 100%;
-            padding: 12px 15px;
+            padding: 10px 12px;
             border: 1px solid #ddd;
             border-radius: 5px;
-            font-size: 16px;
+            font-size: 14px;
             transition: border 0.3s;
         }
         
@@ -75,15 +92,15 @@
         
         .button-group {
             display: flex;
-            gap: 15px;
-            margin-top: 20px;
+            gap: 10px;
+            justify-content: flex-end;
         }
         
         button {
-            padding: 12px 25px;
+            padding: 10px 20px;
             border: none;
             border-radius: 5px;
-            font-size: 16px;
+            font-size: 14px;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s;
@@ -98,15 +115,6 @@
             background-color: #2980b9;
         }
         
-        .btn-success {
-            background-color: #2ecc71;
-            color: white;
-        }
-        
-        .btn-success:hover {
-            background-color: #27ae60;
-        }
-        
         .btn-warning {
             background-color: #f39c12;
             color: white;
@@ -114,6 +122,15 @@
         
         .btn-warning:hover {
             background-color: #d68910;
+        }
+        
+        .btn-success {
+            background-color: #2ecc71;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background-color: #27ae60;
         }
         
         .btn-danger {
@@ -126,62 +143,143 @@
         }
         
         .btn-small {
-            padding: 8px 15px;
-            font-size: 14px;
+            padding: 6px 12px;
+            font-size: 12px;
         }
         
-        .products-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
+        /* 表格樣式 */
+        .table-container {
+            overflow-x: auto;
             margin-top: 20px;
-        }
-        
-        .product-card {
-            background-color: #f9f9f9;
-            border: 1px solid #e0e0e0;
             border-radius: 8px;
-            padding: 20px;
-            transition: all 0.3s;
+            border: 1px solid #e0e0e0;
         }
         
-        .product-card:hover {
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            transform: translateY(-2px);
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1000px;
         }
         
-        .product-header {
+        thead {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: bold;
+            border-right: 1px solid #2980b9;
+            white-space: nowrap;
+        }
+        
+        th:last-child {
+            border-right: none;
+        }
+        
+        tbody tr {
+            border-bottom: 1px solid #eee;
+            transition: background-color 0.3s;
+        }
+        
+        tbody tr:hover {
+            background-color: #f9f9f9;
+        }
+        
+        tbody tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        
+        tbody tr:nth-child(even):hover {
+            background-color: #f1f3f4;
+        }
+        
+        td {
+            padding: 12px 15px;
+            border-right: 1px solid #eee;
+        }
+        
+        td:last-child {
+            border-right: none;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .status-active {
+            background-color: #d5f4e6;
+            color: #27ae60;
+        }
+        
+        .status-inactive {
+            background-color: #fadbd8;
+            color: #e74c3c;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        /* 模態框樣式 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 700px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
         
-        .product-title {
-            font-weight: bold;
-            color: #2c3e50;
-            font-size: 18px;
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #7f8c8d;
         }
         
-        .product-info {
-            margin-bottom: 15px;
-        }
-        
-        .product-field {
-            margin-bottom: 8px;
-            font-size: 14px;
-        }
-        
-        .product-field span {
-            font-weight: bold;
-            color: #555;
+        .editor-info {
+            background-color: #e8f4fc;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border-left: 4px solid #3498db;
         }
         
         .inventory-history {
             background-color: #f8f9fa;
             padding: 15px;
             border-radius: 5px;
-            margin-top: 15px;
+            margin-top: 20px;
             border-left: 3px solid #3498db;
         }
         
@@ -213,75 +311,29 @@
             padding: 20px;
         }
         
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
+        .empty-table {
+            text-align: center;
+            color: #7f8c8d;
+            font-style: italic;
+            padding: 40px;
         }
         
-        .modal-content {
-            background-color: white;
-            padding: 30px;
-            border-radius: 10px;
-            width: 90%;
-            max-width: 600px;
-            max-height: 80vh;
-            overflow-y: auto;
+        .summary-row {
+            background-color: #e3f2fd !important;
+            font-weight: bold;
         }
         
-        .modal-header {
+        .summary-row td {
+            border-top: 2px solid #3498db;
+        }
+        
+        .summary-info {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
-        }
-        
-        .close-modal {
-            background: none;
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-            color: #7f8c8d;
-        }
-        
-        .status-badge {
-            display: inline-block;
-            padding: 3px 8px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: bold;
-            margin-left: 10px;
-        }
-        
-        .status-active {
-            background-color: #d5f4e6;
-            color: #27ae60;
-        }
-        
-        .status-inactive {
-            background-color: #fadbd8;
-            color: #e74c3c;
-        }
-        
-        @media (max-width: 768px) {
-            .container {
-                padding: 20px;
-            }
-            
-            .button-group {
-                flex-direction: column;
-            }
-            
-            .products-grid {
-                grid-template-columns: 1fr;
-            }
+            padding: 10px 0;
+            font-size: 14px;
+            color: #555;
         }
     </style>
 </head>
@@ -289,74 +341,67 @@
     <div class="container">
         <h1>庫存管理系統</h1>
         
-        <!-- 搜尋區 -->
-        <div class="search-section">
-            <h2>搜尋產品</h2>
-            <div class="form-group">
-                <label for="searchClient">客戶名稱</label>
-                <select id="searchClient">
-                    <option value="">全部客戶</option>
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label for="searchModel">機型</label>
-                <select id="searchModel">
-                    <option value="">全部機型</option>
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label for="searchSize">尺寸</label>
-                <select id="searchSize">
-                    <option value="">全部尺寸</option>
-                </select>
+        <!-- 搜尋篩選區 -->
+        <div class="filter-section">
+            <h2>篩選條件</h2>
+            <div class="filter-row">
+                <div class="form-group">
+                    <label for="searchClient">客戶名稱</label>
+                    <select id="searchClient">
+                        <option value="">全部客戶</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="searchModel">機型</label>
+                    <select id="searchModel">
+                        <option value="">全部機型</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="searchSize">尺寸</label>
+                    <select id="searchSize">
+                        <option value="">全部尺寸</option>
+                    </select>
+                </div>
             </div>
             
             <div class="button-group">
                 <button id="searchBtn" class="btn-primary">搜尋</button>
-                <button id="resetBtn" class="btn-warning">重置</button>
-             <!--     <button id="newProductBtn" class="btn-success">新增產品組合</button> --> 
+                <button id="resetBtn" class="btn-warning">重置篩選</button>
             </div>
         </div>
         
-        <!-- 產品列表區 -->
-        <div class="product-section">
+        <!-- 產品列表表格 -->
+        <div class="table-section">
             <h2>產品列表 <span id="productCount">(0)</span></h2>
-            <div id="productsContainer" class="products-grid">
-                <!-- 產品卡片會動態生成在這裡 -->
+            
+            <div class="summary-info">
+                <div>資料統計: <span id="filteredCount">0</span> / <span id="totalCount">0</span> 筆</div>
+                <div>最後更新: <span id="lastUpdate">-</span></div>
             </div>
-        </div>
-        
-        <!-- 新增產品組合模態框 -->
-        <div id="newProductModal" class="modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2>新增產品組合</h2>
-                    <button class="close-modal">&times;</button>
-                </div>
-                
-                <form id="newProductForm">
-                    <div class="form-group">
-                        <label for="newClient">客戶名稱 *</label>
-                        <input type="text" id="newClient" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="newModel">機型 *</label>
-                        <input type="text" id="newModel" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="newSize">尺寸 *</label>
-                        <input type="text" id="newSize" required>
-                    </div>
-                    
-                    <div class="button-group">
-                        <button type="submit" class="btn-success">建立產品組合</button>
-                        <button type="button" id="cancelNewProduct" class="btn-danger">取消</button>
-                    </div>
-                </form>
+            
+            <div class="table-container">
+                <table id="productsTable">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>客戶名稱</th>
+                            <th>機型</th>
+                            <th>尺寸</th>
+                            <th>月底庫存</th>
+                            <th>初始庫存</th>
+                            <th>最後更新時間</th>
+                            <th>最後編輯者</th>
+                            <th>狀態</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="productsTableBody">
+                        <!-- 表格內容會動態生成在這裡 -->
+                    </tbody>
+                </table>
             </div>
         </div>
         
@@ -432,37 +477,33 @@
             initSearchFilters();
             
             // 顯示所有產品
-            displayProducts(products);
+            displayProductsTable(products);
+            
+            // 更新最後更新時間
+            updateLastUpdateTime();
             
             // 事件監聽器
             document.getElementById('searchBtn').addEventListener('click', searchProducts);
             document.getElementById('resetBtn').addEventListener('click', resetSearch);
-            document.getElementById('newProductBtn').addEventListener('click', () => {
-                document.getElementById('newProductModal').style.display = 'flex';
-            });
             
             // 模態框關閉按鈕
             document.querySelectorAll('.close-modal').forEach(btn => {
                 btn.addEventListener('click', () => {
-                    document.querySelectorAll('.modal').forEach(modal => {
-                        modal.style.display = 'none';
-                    });
+                    document.getElementById('inventoryModal').style.display = 'none';
                 });
-            });
-            
-            document.getElementById('cancelNewProduct').addEventListener('click', () => {
-                document.getElementById('newProductModal').style.display = 'none';
             });
             
             document.getElementById('cancelInventory').addEventListener('click', () => {
                 document.getElementById('inventoryModal').style.display = 'none';
             });
             
-            // 新增產品表單提交
-            document.getElementById('newProductForm').addEventListener('submit', addNewProduct);
-            
             // 庫存表單提交
             document.getElementById('inventoryForm').addEventListener('submit', saveInventory);
+            
+            // 每5分鐘自動儲存一次資料（備份）
+            setInterval(() => {
+                localStorage.setItem('inventoryData', JSON.stringify(inventoryData));
+            }, 5 * 60 * 1000);
         });
         
         // 載入產品資料
@@ -592,54 +633,71 @@
             });
         }
         
-        // 顯示產品列表
-        function displayProducts(productsToShow) {
-            const container = document.getElementById('productsContainer');
+        // 顯示產品表格
+        function displayProductsTable(productsToShow) {
+            const tbody = document.getElementById('productsTableBody');
             const countElement = document.getElementById('productCount');
+            const filteredCountElement = document.getElementById('filteredCount');
+            const totalCountElement = document.getElementById('totalCount');
             
-            countElement.textContent = `(${productsToShow.length})`;
+            const totalCount = products.length;
+            const filteredCount = productsToShow.length;
             
-            if (productsToShow.length === 0) {
-                container.innerHTML = '<div class="empty-history">找不到符合條件的產品</div>';
+            countElement.textContent = `(${filteredCount})`;
+            filteredCountElement.textContent = filteredCount;
+            totalCountElement.textContent = totalCount;
+            
+            if (filteredCount === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="10" class="empty-table">找不到符合篩選條件的產品</td>
+                    </tr>
+                `;
                 return;
             }
             
-            container.innerHTML = productsToShow.map(product => {
+            let tableHTML = '';
+            
+            productsToShow.forEach((product, index) => {
                 const productKey = `${product.client}|${product.model}|${product.size}`;
                 const productInventory = inventoryData[productKey] || [];
                 const lastRecord = productInventory[productInventory.length - 1];
                 
-                return `
-                    <div class="product-card" data-key="${productKey}">
-                        <div class="product-header">
-                            <div class="product-title">${product.client}</div>
+                tableHTML += `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${product.client}</td>
+                        <td>${product.model}</td>
+                        <td>${product.size}</td>
+                        <td>${lastRecord ? lastRecord.endInventory : '-'}</td>
+                        <td>${lastRecord ? lastRecord.initialInventory : '-'}</td>
+                        <td>${lastRecord ? lastRecord.timestamp : '-'}</td>
+                        <td>${lastRecord ? lastRecord.editor : '-'}</td>
+                        <td>
                             <span class="status-badge ${lastRecord ? 'status-active' : 'status-inactive'}">
-                                ${lastRecord ? '有庫存' : '無資料'}
+                                ${lastRecord ? '已設定' : '未設定'}
                             </span>
-                        </div>
-                        
-                        <div class="product-info">
-                            <div class="product-field"><span>機型:</span> ${product.model}</div>
-                            <div class="product-field"><span>尺寸:</span> ${product.size}</div>
-                            ${lastRecord ? `
-                                <div class="product-field"><span>最新月底庫存:</span> ${lastRecord.endInventory}</div>
-                                <div class="product-field"><span>最新初始庫存:</span> ${lastRecord.initialInventory}</div>
-                                <div class="product-field"><span>最後更新:</span> ${lastRecord.timestamp}</div>
-                                <div class="product-field"><span>最後編輯者:</span> ${lastRecord.editor}</div>
-                            ` : ''}
-                        </div>
-                        
-                        <div class="button-group">
-                            <button class="btn-primary btn-small edit-inventory-btn" data-key="${productKey}">
-                                ${lastRecord ? '編輯庫存' : '新增庫存'}
-                            </button>
-                            <button class="btn-warning btn-small view-history-btn" data-key="${productKey}">
-                                檢視歷史
-                            </button>
-                        </div>
-                    </div>
+                        </td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn-primary btn-small edit-inventory-btn" 
+                                        data-key="${productKey}"
+                                        data-client="${product.client}"
+                                        data-model="${product.model}"
+                                        data-size="${product.size}">
+                                    ${lastRecord ? '編輯' : '新增'}
+                                </button>
+                                <button class="btn-warning btn-small view-history-btn" 
+                                        data-key="${productKey}">
+                                    歷史
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
                 `;
-            }).join('');
+            });
+            
+            tbody.innerHTML = tableHTML;
             
             // 為按鈕添加事件監聽器
             document.querySelectorAll('.edit-inventory-btn').forEach(btn => {
@@ -677,7 +735,7 @@
                 filteredProducts = filteredProducts.filter(p => p.size === size);
             }
             
-            displayProducts(filteredProducts);
+            displayProductsTable(filteredProducts);
         }
         
         // 重置搜尋
@@ -690,77 +748,7 @@
             updateModelFilter();
             
             // 顯示所有產品
-            displayProducts(products);
-        }
-        
-        // 新增產品組合
-        function addNewProduct(e) {
-            e.preventDefault();
-            
-            const client = document.getElementById('newClient').value.trim();
-            const model = document.getElementById('newModel').value.trim();
-            const size = document.getElementById('newSize').value.trim();
-            
-            if (!client || !model || !size) {
-                alert('請填寫所有欄位');
-                return;
-            }
-            
-            // 檢查是否已存在相同的組合
-            const exists = products.some(p => 
-                p.client === client && p.model === model && p.size === size);
-            
-            if (exists) {
-                alert('此產品組合已存在');
-                return;
-            }
-            
-            // 新增到產品列表
-            const newProduct = { client, model, size };
-            products.push(newProduct);
-            
-            // 更新顯示
-            displayProducts(products);
-            
-            // 更新搜尋篩選器
-            updateSearchFilters(newProduct);
-            
-            // 關閉模態框並重置表單
-            document.getElementById('newProductModal').style.display = 'none';
-            document.getElementById('newProductForm').reset();
-            
-            alert('產品組合新增成功！');
-        }
-        
-        // 更新搜尋篩選器（新增產品時）
-        function updateSearchFilters(newProduct) {
-            const clientSelect = document.getElementById('searchClient');
-            const modelSelect = document.getElementById('searchModel');
-            const sizeSelect = document.getElementById('searchSize');
-            
-            // 檢查並新增客戶選項
-            if (!Array.from(clientSelect.options).some(opt => opt.value === newProduct.client)) {
-                const option = document.createElement('option');
-                option.value = newProduct.client;
-                option.textContent = newProduct.client;
-                clientSelect.appendChild(option);
-            }
-            
-            // 檢查並新增機型選項
-            if (!Array.from(modelSelect.options).some(opt => opt.value === newProduct.model)) {
-                const option = document.createElement('option');
-                option.value = newProduct.model;
-                option.textContent = newProduct.model;
-                modelSelect.appendChild(option);
-            }
-            
-            // 檢查並新增尺寸選項
-            if (!Array.from(sizeSelect.options).some(opt => opt.value === newProduct.size)) {
-                const option = document.createElement('option');
-                option.value = newProduct.size;
-                option.textContent = newProduct.size;
-                sizeSelect.appendChild(option);
-            }
+            displayProductsTable(products);
         }
         
         // 打開庫存編輯模態框
@@ -826,8 +814,10 @@
                         <div class="history-time">${record.timestamp}</div>
                     </div>
                     <div class="history-details">
-                        <div class="product-field"><span>月底庫存:</span> ${record.endInventory}</div>
-                        <div class="product-field"><span>初始庫存:</span> ${record.initialInventory}</div>
+                        <div style="display: flex; gap: 20px;">
+                            <div><strong>月底庫存:</strong> ${record.endInventory}</div>
+                            <div><strong>初始庫存:</strong> ${record.initialInventory}</div>
+                        </div>
                     </div>
                 </div>
             `).join('');
@@ -869,15 +859,80 @@
             localStorage.setItem('inventoryData', JSON.stringify(inventoryData));
             
             // 重新顯示產品列表
-            displayProducts(products);
+            const client = document.getElementById('searchClient').value;
+            const model = document.getElementById('searchModel').value;
+            const size = document.getElementById('searchSize').value;
+            
+            let filteredProducts = products;
+            
+            if (client) filteredProducts = filteredProducts.filter(p => p.client === client);
+            if (model) filteredProducts = filteredProducts.filter(p => p.model === model);
+            if (size) filteredProducts = filteredProducts.filter(p => p.size === size);
+            
+            displayProductsTable(filteredProducts.length > 0 ? filteredProducts : products);
             
             // 更新歷史記錄顯示
             renderInventoryHistory(currentProductKey);
             
-            // 清空表單
-            document.getElementById('inventoryForm').reset();
+            // 更新最後更新時間
+            updateLastUpdateTime();
+            
+            // 如果是編輯模式，清空表單
+            if (document.getElementById('inventoryForm').style.display !== 'none') {
+                document.getElementById('inventoryForm').reset();
+            }
             
             alert('庫存資料儲存成功！');
+        }
+        
+        // 更新最後更新時間
+        function updateLastUpdateTime() {
+            const lastUpdateElement = document.getElementById('lastUpdate');
+            const now = new Date();
+            lastUpdateElement.textContent = now.toLocaleString('zh-TW');
+        }
+        
+        // 導出資料功能（可選）
+        function exportData() {
+            const dataStr = JSON.stringify(inventoryData, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = `inventory_backup_${new Date().toISOString().slice(0,10)}.json`;
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+        }
+        
+        // 匯入資料功能（可選）
+        function importData() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            
+            input.onchange = function(event) {
+                const file = event.target.files[0];
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    try {
+                        const importedData = JSON.parse(e.target.result);
+                        inventoryData = importedData;
+                        localStorage.setItem('inventoryData', JSON.stringify(inventoryData));
+                        
+                        // 重新顯示表格
+                        displayProductsTable(products);
+                        alert('資料匯入成功！');
+                    } catch (error) {
+                        alert('檔案格式錯誤，無法匯入資料');
+                    }
+                };
+                
+                reader.readAsText(file);
+            };
+            
+            input.click();
         }
     </script>
 </body>
