@@ -1,0 +1,37 @@
+/* 
+ * History Module Styles
+ * Adheres to: psi-history-view skill
+ */
+
+.history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    background: var(--card-bg);
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: var(--shadow-subtle);
+}
+
+.history-controls {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.history-controls select {
+    padding: 0.6rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 1rem;
+    background: white;
+}
+
+#history-table-body td {
+    text-align: center;
+}
+
+#history-table-body td:first-child {
+    font-weight: 600;
+}

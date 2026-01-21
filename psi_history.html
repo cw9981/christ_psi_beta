@@ -1,0 +1,36 @@
+<!-- PSI History Module Fragment -->
+<section id="view-history" class="view-section">
+
+    <div class="history-header">
+        <div>
+            <h2 id="history-title">年度歷史資料</h2>
+            <div id="history-subtitle" style="color: var(--text-muted); margin-top: 0.3rem;">載入中...</div>
+        </div>
+        <div class="history-controls">
+            <select id="select-history-year">
+                <option value="2024">2024 年度</option>
+                <option value="2025">2025 年度</option>
+                <option value="2026" selected>2026 年度</option>
+            </select>
+            <button id="btn-history-back" class="btn-secondary">返回詳情</button>
+        </div>
+    </div>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>月份</th>
+                    <th>預測到貨 (P)</th>
+                    <th>預測銷售 (S)</th>
+                    <th>庫存預測 (I)</th>
+                    <th>最後更新時間</th>
+                </tr>
+            </thead>
+            <tbody id="history-table-body">
+                <!-- Data injected by history.js -->
+            </tbody>
+        </table>
+    </div>
+
+</section>

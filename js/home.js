@@ -64,9 +64,13 @@ window.HomeModule = {
                 <td>${p.client}</td>
                 <td>${p.model_spec}</td>
                 <td>${p.currentInventory || p.initialInventory || 0}</td>
-                <td><button class="btn-edit-row">編輯</button></td>
+                <td style="display:flex; gap: 0.5rem;">
+                    <button class="btn-edit-row">編輯預測</button>
+                    <button class="btn-history-row btn-secondary">查詢歷史</button>
+                </td>
             `;
             row.querySelector('.btn-edit-row').onclick = () => window.AppRouter.showDetail(p);
+            row.querySelector('.btn-history-row').onclick = () => window.AppRouter.showHistory(p);
             listBody.appendChild(row);
         });
 

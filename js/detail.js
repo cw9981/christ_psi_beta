@@ -37,11 +37,27 @@ window.DetailModule = {
         }
     },
 
-    render: function () {
+    render: async function () {
         const p = window.AppState.currentProduct;
         if (!p) return;
 
-        // Header
+        // 1. Fetch 7-month context if not already loaded or if we want fresh data
+        const startMonth = this.getStartMonth(); // e.g. "2025-12"
+        const contextData = await window.fetchContextPSI(p.client, p.model_spec, startMonth);
+
+        if (contextData && contextData.length > 0) {
+            // Map GAS fields back to p, s, i
+            p.monthsData = contextData.map(d => ({
+                p: d.p_value || 0,
+                s: d.s_value || 0,
+                i: d.i_value || 0,
+                date: d.date_month
+            }));
+            // Use the first month's predecessor as initial inventory or similar logic
+            // For now, assume calculatePSI handles it.
+        }
+
+        // 2. UI Updates
         document.getElementById('detail-product-name').textContent = p.model_spec;
         document.getElementById('detail-client-name').textContent = p.client;
         document.getElementById('detail-initial-inventory').value = p.initialInventory || 0;
@@ -49,6 +65,13 @@ window.DetailModule = {
         this.calculatePSI();
         this.renderGrid();
         this.renderChart();
+    },
+
+    getStartMonth: function () {
+        // Simple logic to get last month
+        const d = new Date();
+        d.setMonth(d.getMonth() - 1);
+        return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
     },
 
     /**

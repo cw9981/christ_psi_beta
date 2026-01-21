@@ -21,13 +21,8 @@ async function initAppShell() {
     // 1. Initial Data Load
     await loadBaseData();
 
-    // 2. Load Templates into Shell
+    // 2. Load Templates into Shell (This also initializes modules)
     await loadTemplates();
-
-    // 3. Initialize Home View (Default)
-    if (window.HomeModule) {
-        window.HomeModule.init();
-    }
 }
 
 function updateHeaderTitle() {
@@ -58,12 +53,19 @@ async function loadBaseData() {
 async function loadTemplates() {
     const container = document.getElementById('app-content');
     try {
-        const [homeHtml, detailHtml] = await Promise.all([
+        const [homeHtml, detailHtml, historyHtml] = await Promise.all([
             fetch('./home_list.html').then(r => r.text()),
-            fetch('./psi_detail.html').then(r => r.text())
+            fetch('./psi_detail.html').then(r => r.text()),
+            fetch('./psi_history.html').then(r => r.text())
         ]);
 
-        container.innerHTML = homeHtml + detailHtml;
+        container.innerHTML = homeHtml + detailHtml + historyHtml;
+
+        // Initialize Modules after templates are loaded
+        if (window.HomeModule) window.HomeModule.init();
+        if (window.DetailModule) window.DetailModule.init();
+        if (window.HistoryModule) window.HistoryModule.init();
+
     } catch (e) {
         console.error("Template loading error:", e);
         container.innerHTML = `<h2 style="color:red; text-align:center; margin-top:5rem;">模組載入失敗 (Module Load Error)</h2>`;
@@ -73,15 +75,22 @@ async function loadTemplates() {
 // --- Global Navigation Helper ---
 window.AppRouter = {
     showHome: () => {
+        document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
         document.getElementById('view-home').classList.add('active');
-        document.getElementById('view-detail').classList.remove('active');
         if (window.HomeModule) window.HomeModule.render();
     },
 
-    showDetail: (product) => {
+    showDetail: async (product) => {
         window.AppState.currentProduct = product;
-        document.getElementById('view-home').classList.remove('active');
+        document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
         document.getElementById('view-detail').classList.add('active');
-        if (window.DetailModule) window.DetailModule.init(product);
+        if (window.DetailModule) await window.DetailModule.render();
+    },
+
+    showHistory: (product) => {
+        window.AppState.currentProduct = product;
+        document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
+        document.getElementById('view-history').classList.add('active');
+        if (window.HistoryModule) window.HistoryModule.show(product);
     }
 };

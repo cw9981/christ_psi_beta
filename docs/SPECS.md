@@ -7,7 +7,7 @@
 index.html: 主外殼 (App Shell)，負責加載 CSS/JS。
 home_list.html: 包含產品清單表格、篩選器以及「新增產品」的對話框。
 psi_detail.html: 包含 PSI 預測網格、初始庫存輸入、趨勢圖表以及「編輯月份」的對話框。
-
+psi_history.html: 包含年度歷史視圖的表格。
 
 ### 技術架構
 - **Frontend:** 純 HTML, HTML5, Vanilla JavaScript, CSS 
@@ -33,24 +33,34 @@ psi_detail.html: 包含 PSI 預測網格、初始庫存輸入、趨勢圖表以�
     - 點擊編輯 (Click-to-Edit) 模式。
     - 前端即時庫存遞移計算 (Inventory Rolling Calculation).
 
-### 3. 設計規範 (Design Guidelines)
+### 3. 年度歷史視圖 (Yearly History)
+> **UI 規範:** 請參閱 `.antigravity/skills/psi-history-view/SKILL.md`
+
+- **功能:** 檢視特定產品在一整年度的 PSI 歷史數據。
+- **年度切換:** 支援下拉選單切換年份 (如 2024, 2025, 2026)。
+- **資料來源:** 從對應年度的 Sheet 分頁讀取。
+
+### 4. 設計規範 (Design Guidelines)
 - **語言:** 全站使用 **繁體中文 (Traditional Chinese)** (參閱 `localization-rules`).
 - **Footer (頁尾):**
     - 顯示版權宣告: `Copyright © 2026 Christ Huang. Developed by CW9981.`
     - 顯示兩個圖示 (Icons): Christ Logo, CW9981 Logo。
 - **UI 風格:** 專業、簡潔、高密度資訊顯示。
--  載入/儲存 GAS 資料  要出現 UI 等待中 
+- **Loading 狀態:** 發起 GAS 請求時需顯示全域載入指示器。
 
 ## 資料與整合 (Google Sheets Integration)
 
-本系統使用 Google Sheets 來讀取與儲存庫存及銷售數據。
+本系統使用 Google Sheets 作為後端資料庫，透過 Google Apps Script (GAS) 進行 API 介接。
 
-### 資料結構
-- **Inventory Data (Google Sheets):**
-    - 每個產品對應一個 Sheet (分頁)。
-    - **欄位格式:** `日期月份`, `預測到貨 (P)`, `預測銷售 (S)`, `庫存 (I)`, `最新編輯時間 (Last Updated)`
+### 資料與部署規範
+完整的資料結構定義、GAS 程式碼範例以及單元測試指令，請參閱專屬文件：
 
-### Google Apps Script (GAS) 實作
-完整程式碼與部署教學請參考: [Google Apps Script 設定指南](docs/google_apps_script_setup.md)
-*(前端透過 API 讀寫 Google Sheets)*
+> [!IMPORTANT]
+> **[Google Apps Script 設定與部署指南](google_apps_script_setup.md)**
+
+### 核心整合要求
+- **年度分頁:** 資料依年度 (如 `2025`, `2026`) 分頁儲存。
+- **跨年讀取:** 前端請求 7 個月資料時，GAS 需具備自動合併跨年度數據的能力。
+- **自動化維護:** 儲存新年度資料時，若該年度分頁不存在，應由 GAS 自動建立。
+- **測試:** 支援使用 `wget` 進行 API 功能驗證。
 
