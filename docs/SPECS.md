@@ -74,3 +74,4 @@
 ### Google Apps Script (GAS) 實作
 完整程式碼與部署教學請參考: [Google Apps Script 設定指南](docs/google_apps_script_setup.md)
 *(前端透過 API 讀寫 Google Sheets)*
+
