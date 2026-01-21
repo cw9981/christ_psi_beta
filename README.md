@@ -19,11 +19,6 @@ For development, please refer to the skills defined in `.antigravity/skills/`.
 
 請根據 SPECS.md 的產品規格，並嚴格遵守 .antigravity/skills 中的技術規範，開始開發這個網站。
 
-請執行以下步驟：
-1. 使用 `html-expert` 和 `psi-logic-visualizer` 技能，在 根目錄資料夾中建立 index.html, home_list.html, psi_detail.html、css/style.css 和 js/main.js。
-2. 確保 UI 符合「橫式緊湊佈局」與「藍色主題」。
-3. 使用 `google-sheets-connector` 技能，生成與後端溝通的 API 程式碼框架。
-
    ```
    
 

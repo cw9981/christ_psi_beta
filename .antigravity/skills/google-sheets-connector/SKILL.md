@@ -1,50 +1,50 @@
 ---
-name: google-sheets-connector
-description: Expert guidance on connecting to Google Sheets via Google Apps Script (GAS)
+name: Google 表格連接器 (Google Sheets Connector)
+description: 透過 Google Apps Script (GAS) 連接 Google Sheets 的專家指南。
 ---
 
-# Google Sheets Connector Skill
+# Google 表格連接器技能 (Google Sheets Connector Skill)
 
-## Definition
-Use this skill when the user needs to **read** from or **write** to the Google Sheets backend.
+## 定義
+當使用者需要從 Google Sheets 後端 **讀取** 或 **寫入** 資料時，請使用此技能。
 
-## Rules
+## 規則
 
-1.  **Transport Mechanism**: 
-    - You MUST use `fetch` for all API requests.
-    - Do NOT use third-party libraries for HTTP requests unless explicitly requested.
+1.  **傳輸機制**: 
+    - 必須使用原生 `fetch` 進行所有 API 請求。
+    - 除非明確要求，否則不要使用第三方 HTTP 請求函式庫。
 
-2.  **Method Handling**:
-    - **Reading Data**: Use `doGet` conventions if the GAS script is set up that way, or a `POST` with an action parameter if using a unified endpoint. (Default to `fetch(url)` for read if simple, but often GAS requires `POST` to avoid caching logic complexity or payload limits). *Clarification based on user preference*: Ensure you handle `doGet` and `doPost` appropriately as requested.
-    - **Writing Data**: Use `doPost`.
-    - **CORS**: Remember that GAS web apps redirect. `fetch` handles redirects automatically, but you cannot read the `Response` object if the redirect goes to a different origin strictly without CORS headers. However, standard GAS `ContentService` usually handles this. *Crucial*: Ensure `mode: 'cors'` is used or understood.
+2.  **請求處理**:
+    - **讀取資料**: 預設使用 `fetch(url)`。若 GAS 端的 `doGet` 有快取問題，可考慮加上時間戳參數 (e.g. `?v=timestamp`)。
+    - **寫入資料**: 使用 `doPost` 並確保 payload 正確傳送。
+    - **CORS**: 記住 GAS 網網頁應用程式會進行重新導向。`fetch` 會自動處理導向，但需確保 GAS 的 `ContentService` 已正確處理輸出。
 
-3.  **UI Feedback**:
-    - **Loading State**: When a data request is initiated, you **MUST** display a visible "Loading..." indicator in the UI. 
-    - The indicator must remain visible until the request completes (success or failure).
+3.  **UI 反饋**:
+    - **載入狀態**: 當發起資料請求時，**必須** 在 UI 中顯示明顯的「載入中...」指示器。
+    - 指示器必須保持顯示，直到請求完成（成功或失敗）為止。
 
-4.  **Error Handling**:
-    - Check `response.ok`.
-    - If the response is not 200 OK, or if the JSON body contains an error status (common in GAS wrappers), you **MUST** alert the error message to the user (e.g., `alert('Error: ...')`).
-    - Use `console.error` for debugging details.
+4.  **錯誤處理**:
+    - 檢查 `response.ok`。
+    - 若回應非 200 OK，或 JSON 內容包含錯誤字元，**必須** 以跳出視窗 (`alert`) 告知使用者錯誤訊息。
+    - 使用 `console.error` 記錄詳細的調試資訊。
 
-## Example Pattern
+## 範例模式
 
 ```javascript
 async function fetchData(url) {
-  showLoading(true); // Implementation of displaying "Loading..."
+  showLoading(true); // 顯示指示器的實作
   try {
     const response = await fetch(url);
     if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        throw new Error(`HTTP 錯誤！狀態碼：${response.status}`);
     }
     const data = await response.json();
     return data;
   } catch (e) {
-    alert('Failed to load data: ' + e.message);
+    alert('資料載入失敗：' + e.message);
     console.error(e);
   } finally {
-    showLoading(false);
+    showLoading(false); // 隱藏指示器
   }
 }
 ```

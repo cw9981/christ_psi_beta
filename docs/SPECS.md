@@ -4,6 +4,11 @@
 
 ## 專案總覽
 
+index.html: 主外殼 (App Shell)，負責加載 CSS/JS。
+home_list.html: 包含產品清單表格、篩選器以及「新增產品」的對話框。
+psi_detail.html: 包含 PSI 預測網格、初始庫存輸入、趨勢圖表以及「編輯月份」的對話框。
+
+
 ### 技術架構
 - **Frontend:** 純 HTML, HTML5, Vanilla JavaScript, CSS 
 - **Backend / Database:** Google Sheets (作為資料庫)
@@ -11,51 +16,26 @@
 
 ## 主要功能
 
-### 1. 產品總覽 (Home)
-- **Title 顯示:** 顯示當前月份，例如 "2026 一月"。
+### 1. 產品總覽 (Home List)
+> **UI 規範:** 請參閱 `.antigravity/skills/product-list-view/SKILL.md`
 
-- **篩選 (Filter):** 支援依據「客戶 (Client)」進行篩選。
-    - **資料來源:** `client.json`。 資料統計：顯示篩選後/總共的筆數  
-- **新增功能 (Add):**
-    - 提供 "Add" 按鈕。
-    - 點擊後彈出對話框 (Dialog)。
-    - **輸入欄位:** 
-        - 選擇 **Client** (資料來源: `client.json`)。
-        - 選擇 **Model Spec** (資料來源: `products.json`)。
-        - 設定 **預設庫存 (Default Inventory)** (即上個月月底庫存)。
-    - **動作:**確認後進入該產品的 Detail Page。
-- **資料預覽與導出:** 
-    - 支援預覽所有產品的 PSI 表格。
-    - 支援導出功能 (Json format / Excel)。
+- **Title 顯示:** 顯示當前月份，例如 "2026 年 1 月"。
+- **資料來源:** 
+    - 列表資料: Mock / GAS API (Active Products).
+    - 篩選資料: `client.json`.
+    - 新增選項: `products.json`.
 
-- **列表顯示:** 改為 **傳統表格 (Table)** 顯示。
-    - 每行顯示一筆產品資料。每行都有「編輯」按鈕。
-    - **欄位:** Client, Model Spec, 上個月月底庫存 (從 GAS/Mock 載入)。    
-    - **動作:**點擊「編輯」按鈕進入該產品的 Detail Page。
-    
-    
-### 2. 詳細預測頁面 (Detail Page)
-- **PSI 預測模型:** 
-    - 針對單一產品進行 6 個月 (當月 + 未來 5 個月) 的庫存預測。
-    - **邏輯 (PSI Logic):**
-        > **月底庫存 (I) = 上月庫存 + 預測到貨 (P) - 預測銷售 (S)**
-    - *註: $P$ (Production/Purchase), $S$ (Sales), $I$ (Inventory)*
-    - **顯示方式:** 參考 Excel UI 風格 (如下圖)，採用橫式佈局。
-        - ![Excel UI Reference](excel_ui.jpg)
-- **資料編輯:**
-    - **預設庫存 (Default Inventory):** 可編輯上個月的庫存數值 (做為初始 I)。
-    - **P (預測到貨) & S (預測銷售):** 
-        - 當月及未來 5 個月皆可編輯。
-        - 點擊月份開啟編輯對話框 (Modal Editing)。
-    - **I (庫存):** 自動計算，不可直接編輯。
-- **互動式圖表:** 頁面下方顯示庫存與銷售趨勢的折線圖 (Line Chart)，視覺化呈現預測結果。
+### 2. 詳細預測頁面 (PSI Detail)
+> **UI 規範:** 請參閱 `.antigravity/skills/psi-detail-view/SKILL.md`
+
+- **功能重點:**
+    - 6 個月 PSI 預測。
+    - 點擊編輯 (Click-to-Edit) 模式。
+    - 前端即時庫存遞移計算 (Inventory Rolling Calculation).
 
 ### 3. 設計規範 (Design Guidelines)
-- **語言:** 全站使用 **繁體中文 (Traditional Chinese)**。
-- **平台:** **PC First** (不需特別針對手機優化)。
-- **主題:** 白天模式 (Light Mode)，主色調為 **藍色 (Blue)**。
+- **語言:** 全站使用 **繁體中文 (Traditional Chinese)** (參閱 `localization-rules`).
 - **Footer (頁尾):**
-    - 移除 Header 版本號。
     - 顯示版權宣告: `Copyright © 2026 Christ Huang. Developed by CW9981.`
     - 顯示兩個圖示 (Icons): Christ Logo, CW9981 Logo。
 - **UI 風格:** 專業、簡潔、高密度資訊顯示。
@@ -66,7 +46,6 @@
 本系統使用 Google Sheets 來讀取與儲存庫存及銷售數據。
 
 ### 資料結構
-- **Products:** 定義於 `products.json`。
 - **Inventory Data (Google Sheets):**
     - 每個產品對應一個 Sheet (分頁)。
     - **欄位格式:** `日期月份`, `預測到貨 (P)`, `預測銷售 (S)`, `庫存 (I)`, `最新編輯時間 (Last Updated)`

@@ -1,0 +1,83 @@
+/* 
+ * Detail Module Styles (PSI Grid & Chart)
+ * Adheres to: psi-detail-view skill
+ */
+
+.detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    background: var(--card-bg);
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: var(--shadow-subtle);
+}
+
+.psi-container {
+    background: var(--card-bg);
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: var(--shadow-subtle);
+}
+
+.psi-grid {
+    display: grid;
+    grid-template-columns: 180px repeat(6, 1fr);
+    background-color: var(--border-color);
+    border: 1px solid var(--border-color);
+    margin-top: 1rem;
+}
+
+.psi-cell {
+    background: white;
+    padding: 0.8rem;
+    text-align: center;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.psi-header-cell {
+    background: var(--secondary-color);
+    color: var(--primary-color);
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.psi-header-cell:hover {
+    background: #dbeafe;
+}
+
+.psi-label-cell {
+    background: #f8f9fa;
+    justify-content: flex-start;
+    font-weight: 600;
+    color: #444;
+}
+
+.p-val {
+    color: var(--success-color);
+    cursor: pointer;
+}
+
+.s-val {
+    color: var(--error-color);
+    cursor: pointer;
+}
+
+.i-val {
+    font-weight: 800;
+    background: #f0f7ff;
+}
+
+/* Chart */
+.chart-container {
+    margin-top: 2.5rem;
+    background: var(--card-bg);
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: var(--shadow-subtle);
+    height: 450px;
+}

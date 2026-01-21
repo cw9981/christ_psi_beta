@@ -1,0 +1,78 @@
+/* 
+ * Home Module Styles (Product List)
+ * Adheres to: product-list-view skill
+ */
+
+.controls {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+    align-items: center;
+    background: var(--card-bg);
+    padding: 1.2rem;
+    border-radius: 8px;
+    box-shadow: var(--shadow-subtle);
+}
+
+.controls label {
+    font-weight: 600;
+}
+
+.controls select {
+    padding: 0.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+}
+
+#list-stats {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+/* Table Design */
+.table-container {
+    background: var(--card-bg);
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: var(--shadow-subtle);
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th {
+    background-color: var(--secondary-color);
+    color: var(--primary-color);
+    font-weight: 700;
+    text-align: left;
+    padding: 1.2rem 1rem;
+    border-bottom: 2px solid #cfe2f3;
+}
+
+td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+tr:hover {
+    background-color: #f7fbff;
+}
+
+.btn-edit-row {
+    background-color: transparent;
+    border: 1px solid var(--primary-color);
+    color: var(--primary-color);
+    padding: 0.4rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+}
+
+.btn-edit-row:hover {
+    background-color: var(--primary-color);
+    color: white;
+}

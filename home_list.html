@@ -1,0 +1,54 @@
+<!-- Home List Module Fragment -->
+<section id="view-home" class="view-section active">
+
+    <div class="controls">
+        <div class="form-group">
+            <label for="filter-client">客戶篩選:</label>
+            <select id="filter-client">
+                <option value="all">所有客戶</option>
+            </select>
+        </div>
+        <div id="list-stats">載入中...</div>
+        <button id="btn-add-product" class="btn-primary" style="margin-left: auto;">新增產品</button>
+    </div>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>客戶 (Client)</th>
+                    <th>型號規格 (Model Spec)</th>
+                    <th>上月庫存 (Last Month Inv)</th>
+                    <th>動作 (Action)</th>
+                </tr>
+            </thead>
+            <tbody id="product-list-body">
+                <!-- Rows injected by home.js -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Add Product Dialog -->
+    <dialog id="dialog-add">
+        <h3>新增產品</h3>
+        <form id="form-add">
+            <div class="form-group">
+                <label for="add-client">客戶:</label>
+                <select id="add-client" required></select>
+            </div>
+            <div class="form-group">
+                <label for="add-model">型號規格:</label>
+                <select id="add-model" required></select>
+            </div>
+            <div class="form-group">
+                <label for="add-initial-inv">期初庫存 (上月底):</label>
+                <input type="number" id="add-initial-inv" value="0" required>
+            </div>
+            <div class="dialog-actions">
+                <button type="button" id="btn-cancel-add" class="btn-secondary">取消</button>
+                <button type="submit" class="btn-primary">確認新增</button>
+            </div>
+        </form>
+    </dialog>
+
+</section>
