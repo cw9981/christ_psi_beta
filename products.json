@@ -1,15 +1,67 @@
 [
-  {"client": "客戶A", "model": "設備A", "size": "s"},
-  {"client": "客戶A", "model": "設備A", "size": "m"},
-  {"client": "客戶A", "model": "設備A", "size": "l"},
-  {"client": "客戶A", "model": "設備A2", "size": "apple"},
-  {"client": "客戶A", "model": "設備A3", "size": "bear"},
-  {"client": "客戶BB", "model": "model_b1", "size": "cat"},
-  {"client": "客戶BB", "model": "model_b2", "size": "dog"},
-  {"client": "客戶BB", "model": "model_b3", "size": "egg"},
-  {"client": "客戶BB", "model": "model_b4", "size": "father"},
-  {"client": "client CCC", "model": "m_01", "size": "ccc_size_1"},
-  {"client": "client CCC", "model": "m_01", "size": "ccc_size_2"},
-  {"client": "client CCC", "model": "m_01", "size": "ccc_size_3"},
-  {"client": "client CCC", "model": "m_03", "size": "ccc_size_4"}
+  {
+    "client": "客戶A",
+    "model": "設備A",
+    "size": "s"
+  },
+  {
+    "client": "客戶A",
+    "model": "設備A",
+    "size": "m"
+  },
+  {
+    "client": "客戶A",
+    "model": "設備A",
+    "size": "l"
+  },
+  {
+    "client": "客戶A",
+    "model": "設備A2",
+    "size": "apple"
+  },
+  {
+    "client": "客戶A",
+    "model": "設備A3",
+    "size": "bear"
+  },
+  {
+    "client": "客戶BB",
+    "model": "設備A2",
+    "size": "cat"
+  },
+  {
+    "client": "客戶BB",
+    "model": "設備A",
+    "size": "dog"
+  },
+  {
+    "client": "客戶BB",
+    "model": "設備A",
+    "size": "egg"
+  },
+  {
+    "client": "客戶BB",
+    "model": "設備A",
+    "size": "father"
+  },
+  {
+    "client": "client CCC",
+    "model": "m_01",
+    "size": "ccc_size_1"
+  },
+  {
+    "client": "client CCC",
+    "model": "m_01",
+    "size": "ccc_size_2"
+  },
+  {
+    "client": "client CCC",
+    "model": "m_01",
+    "size": "ccc_size_3"
+  },
+  {
+    "client": "client CCC",
+    "model": "m_03",
+    "size": "ccc_size_4"
+  }
 ]
