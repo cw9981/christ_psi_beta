@@ -1,24 +1,62 @@
-
 [
-    { "model": "D3450",      "spec": "250mm×100M",  "model_spec": "D3450_250mm×100M" },
-    { "model": "D3450",      "spec": "500mm×100M",  "model_spec": "D3450_500mm×100M" },
-
-    { "model": "D3451",      "spec": "250mm×100M",  "model_spec": "D3451_250mm×100M" },
-    { "model": "D3451",      "spec": "500mm×100M",  "model_spec": "D3451_500mm×100M" },
-
-    { "model": "D3510-25",   "spec": "250mm×100M",  "model_spec": "D3510-25_250mm×100M" },
-    { "model": "D3510-25",   "spec": "500mm×100M",  "model_spec": "D3510-25_500mm×100M" },
-
-    { "model": "D5410P-15",  "spec": "250mm×100M",  "model_spec": "D5410P-15_250mm×100M" },
-    { "model": "D5410P-15",  "spec": "500mm×100M",  "model_spec": "D5410P-15_500mm×100M" },
-
-    { "model": "NP605",      "spec": "400mm×100M",  "model_spec": "NP605_400mm×100M" },
-
-    { "model": "SP7600HF",   "spec": "500mm×100M",  "model_spec": "SP7600HF_500mm×100M" },
-
-    { "model": "T4000",      "spec": "1020mm×50M",  "model_spec": "T4000_1020mm×50M" },
-
-    { "model": "T4000B",     "spec": "1020mm×50M",  "model_spec": "T4000B_1020mm×50M" }
+    {
+        "model": "D3450",
+        "spec": "250mm×100M",
+        "model_spec": "D3450_250mm×100M"
+    },
+    {
+        "model": "D3450",
+        "spec": "500mm×100M",
+        "model_spec": "D3450_500mm×100M"
+    },
+    {
+        "model": "D3451",
+        "spec": "250mm×100M",
+        "model_spec": "D3451_250mm×100M"
+    },
+    {
+        "model": "D3451",
+        "spec": "500mm×100M",
+        "model_spec": "D3451_500mm×100M"
+    },
+    {
+        "model": "D3510-25",
+        "spec": "250mm×100M",
+        "model_spec": "D3510-25_250mm×100M"
+    },
+    {
+        "model": "D3510-25",
+        "spec": "500mm×100M",
+        "model_spec": "D3510-25_500mm×100M"
+    },
+    {
+        "model": "D5410P-15",
+        "spec": "250mm×100M",
+        "model_spec": "D5410P-15_250mm×100M"
+    },
+    {
+        "model": "D5410P-15",
+        "spec": "500mm×100M",
+        "model_spec": "D5410P-15_500mm×100M"
+    },
+    {
+        "model": "NP605",
+        "spec": "400mm×100M",
+        "model_spec": "NP605_400mm×100M"
+    },
+    {
+        "model": "SP7600HF",
+        "spec": "500mm×100M",
+        "model_spec": "SP7600HF_500mm×100M"
+    },
+    {
+        "model": "T4000",
+        "spec": "1020mm×50M",
+        "model_spec": "T4000_1020mm×50M"
+    },
+    {
+        "model": "T4000B",
+        "spec": "1020mm×50M",
+        "model_spec": "T4000B_1020mm×50M"
+    }
 ]
-
-

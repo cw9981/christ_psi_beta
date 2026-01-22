@@ -1,7 +1,22 @@
 [
-    { "client": "SUPERBOND" , "contact":"" },
-    { "client": "HUAQIN" , "contact":"" },
-    { "client": "MINGTENGAVARY" , "contact":""  },
-    { "client": "AVARY", "contact":""  },
-    { "client": "UNIMICORN" , "contact":"" }
+    {
+        "client": "SUPERBOND",
+        "contact": ""
+    },
+    {
+        "client": "HUAQIN",
+        "contact": ""
+    },
+    {
+        "client": "MINGTENGAVARY",
+        "contact": ""
+    },
+    {
+        "client": "AVARY",
+        "contact": ""
+    },
+    {
+        "client": "UNIMICORN",
+        "contact": ""
+    }
 ]

@@ -45,16 +45,21 @@ window.DetailModule = {
         const startMonth = this.getStartMonth(); // e.g. "2025-12"
         const contextData = await window.fetchContextPSI(p.client, p.model_spec, startMonth);
 
-        if (contextData && contextData.length > 0) {
-            // Map GAS fields back to p, s, i
-            p.monthsData = contextData.map(d => ({
+        if (contextData) {
+            // Update Initial Inventory from Server (Previous Month's Stock)
+            if (contextData.i_stock !== undefined) {
+                p.initialInventory = contextData.i_stock;
+            }
+
+            // Map API forecast items back to p, s, i
+            // API returns 'forecast_items' array
+            const items = contextData.forecast_items || [];
+            p.monthsData = items.map(d => ({
                 p: d.p_value || 0,
                 s: d.s_value || 0,
                 i: d.i_value || 0,
-                date: d.date_month
+                date_month: d.date_month // Store for saving
             }));
-            // Use the first month's predecessor as initial inventory or similar logic
-            // For now, assume calculatePSI handles it.
         }
 
         // 2. UI Updates
@@ -68,9 +73,9 @@ window.DetailModule = {
     },
 
     getStartMonth: function () {
-        // Simple logic to get last month
+        // Return current month (YYYY-MM)
+        // GAS API will fetch Predecessor (Last Month) + Current...Future 5
         const d = new Date();
-        d.setMonth(d.getMonth() - 1);
         return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
     },
 
@@ -82,7 +87,12 @@ window.DetailModule = {
         let runningInv = p.initialInventory || 0;
 
         if (!p.monthsData || p.monthsData.length === 0) {
-            p.monthsData = Array.from({ length: 6 }, (_, i) => ({ p: 0, s: 0 }));
+            const today = new Date();
+            p.monthsData = Array.from({ length: 6 }, (_, i) => {
+                const d = new Date(today.getFullYear(), today.getMonth() + i, 1);
+                const mStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+                return { date_month: mStr, p: 0, s: 0 };
+            });
         }
 
         p.monthsData.forEach(m => {
@@ -157,16 +167,24 @@ window.DetailModule = {
         document.getElementById('dialog-edit-month').showModal();
     },
 
-    handleEditSubmit: function () {
+    handleEditSubmit: async function () {
         const idx = this.editingMonthIndex;
         const p = window.AppState.currentProduct.monthsData[idx];
 
+        // 1. Update Local State & UI Immediately (Optimistic)
         p.p = parseInt(document.getElementById('edit-p').value) || 0;
         p.s = parseInt(document.getElementById('edit-s').value) || 0;
 
         document.getElementById('dialog-edit-month').close();
-        this.render(); // Triggers recalc and grid/chart update
-        window.saveProductData(window.AppState.currentProduct);
+        this.render(); // Recalculate I and update Grid/Chart
+
+        // 2. Persist to Backend
+        try {
+            await window.saveProductData(window.AppState.currentProduct);
+        } catch (e) {
+            console.error("Save failed:", e);
+            // Alert is handled in api.js, but we log here just in case.
+        }
     },
 
     renderChart: function () {

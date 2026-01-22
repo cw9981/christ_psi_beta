@@ -52,6 +52,18 @@ window.HomeModule = {
             });
         }
 
+        // 1. Update Dynamic Headers
+        const monthHeaders = document.querySelectorAll('#product-list-header .dynamic-month');
+        // Calculate dynamic month labels starting from next month
+        const today = new Date();
+        for (let i = 0; i < 6; i++) {
+            // Logic: The API returns Current Month + 5 Future Months.
+            // So index 0 is Current Month.
+            const d = new Date(today.getFullYear(), today.getMonth() + i, 1);
+            const mStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+            if (monthHeaders[i]) monthHeaders[i].textContent = mStr;
+        }
+
         listBody.innerHTML = '';
         const products = window.AppState.products;
         const filtered = products.filter(p => filterVal === 'all' || p.client === filterVal);
@@ -60,13 +72,31 @@ window.HomeModule = {
 
         filtered.forEach(p => {
             const row = document.createElement('tr');
+
+            // Generate the 6 monthly PSI cells
+            let forecastCells = '';
+            for (let i = 0; i < 6; i++) {
+                // API (fetchProducts) maps data to 'monthsData'
+                const mData = p.monthsData && p.monthsData[i] ? p.monthsData[i] : { p: 0, s: 0, i: 0 };
+
+                // Use correct properties: p, s, i (not p_value)
+                forecastCells += `
+                    <td style="font-size: 0.8rem; border-left: 1px solid #eee; text-align:center;">
+                        <div style="color:#007bff">P:${mData.p || 0}</div>
+                        <div style="color:#28a745">S:${mData.s || 0}</div>
+                        <div style="font-weight:bold">I:${mData.i || 0}</div>
+                    </td>
+                `;
+            }
+
             row.innerHTML = `
                 <td>${p.client}</td>
                 <td>${p.model_spec}</td>
-                <td>${p.currentInventory || p.initialInventory || 0}</td>
-                <td style="display:flex; gap: 0.5rem;">
-                    <button class="btn-edit-row">編輯預測</button>
-                    <button class="btn-history-row btn-secondary">查詢歷史</button>
+                <td style="text-align:center; font-weight:bold; background:#eef7ff">${p.initialInventory || 0}</td>
+                ${forecastCells}
+                <td style="display:flex; gap: 0.5rem; vertical-align: middle;">
+                    <button class="btn-edit-row">編輯</button>
+                    <button class="btn-history-row btn-secondary">歷史</button>
                 </td>
             `;
             row.querySelector('.btn-edit-row').onclick = () => window.AppRouter.showDetail(p);
@@ -91,21 +121,48 @@ window.HomeModule = {
         dialog.showModal();
     },
 
-    handleAddProduct: function () {
+    handleAddProduct: async function () {
         const client = document.getElementById('add-client').value;
         const model = document.getElementById('add-model').value;
         const initInv = parseInt(document.getElementById('add-initial-inv').value) || 0;
+
+        // Initialize 6 months data with proper date_month
+        const today = new Date();
+        const monthsData = [];
+        for (let i = 0; i < 6; i++) {
+            const d = new Date(today.getFullYear(), today.getMonth() + i, 1);
+            const mStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+            monthsData.push({ date_month: mStr, p: 0, s: 0, i: 0 });
+        }
+
+        // Calculate initial I for first month? 
+        // Logic: runningInv = initInv + p - s.
+        let runningInv = initInv;
+        monthsData.forEach(m => {
+            m.i = runningInv + m.p - m.s;
+            runningInv = m.i;
+        });
 
         const newP = {
             id: 'new_' + Date.now(),
             client: client,
             model_spec: model,
             initialInventory: initInv,
-            monthsData: []
+            monthsData: monthsData
         };
 
         window.AppState.products.push(newP);
         document.getElementById('dialog-add').close();
+
+        // Optimistic UI: Show Detail Immediately
         window.AppRouter.showDetail(newP);
+
+        // Persist to Backend
+        try {
+            await window.saveProductData(newP);
+        } catch (e) {
+            console.error("Failed to save new product:", e);
+            // API layer handles alert, but we might want to flag UI if save failed?
+        }
     }
 };

@@ -52,15 +52,27 @@ psi_history.html: 包含年度歷史視圖的表格。
 
 本系統使用 Google Sheets 作為後端資料庫，透過 Google Apps Script (GAS) 進行 API 介接。
 
+### 應用場景
+- 產品總覽 (Home List)：
+從 API 取得半年度 PSI 資料。資料包含兩個部分：
+上個月的 i_value：即庫存預測值 (I)。
+當前月份起連續六個月的 PSI 資料列表。
+
+- 年度歷史視圖 (Yearly History)：
+從 API 取得完整年度的 PSI 歷史資料。
+
+
 ### 資料與部署規範
 完整的資料結構定義、GAS 程式碼範例以及單元測試指令，請參閱專屬文件：
 
 > [!IMPORTANT]
-> **[Google Apps Script 設定與部署指南](google_apps_script_setup.md)**
+> **[Google Apps Script 設定與部署指南](gas_setup.md)**
 
 ### 核心整合要求
 - **年度分頁:** 資料依年度 (如 `2025`, `2026`) 分頁儲存。
-- **跨年讀取:** 前端請求 7 個月資料時，GAS 需具備自動合併跨年度數據的能力。
+- **跨年讀取:** 前端請求資料時，GAS 需具備自動合併跨年度數據的能力。
 - **自動化維護:** 儲存新年度資料時，若該年度分頁不存在，應由 GAS 自動建立。
-- **測試:** 支援使用 `wget` 進行 API 功能驗證。
+- **測試:** 支援使用 `wget` 進行 API 功能驗證。 
+
+
 

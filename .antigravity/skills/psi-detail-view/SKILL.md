@@ -40,3 +40,9 @@ description: PSI 詳細頁面 (psi_detail.html) 的顯示標準與邏輯。
 ## 5. 語言規範
 -   嚴格遵守 `localization-rules` 技能。
 -   標準標籤："預測到貨 (P)", "預測銷售 (S)", "庫存預測 (I)"。
+
+## 6. 資料儲存規範 (Persistence Logic)
+- **儲存範圍**: 呼叫儲存 API 時，必須同時包含 **「 6 個月預測」** 與 **「上個月實際庫存 (Context)」**。
+- **上個月資料處理規則**:
+      - **寫入 Context**: 必須產生一筆額外的資料列，將 UI 上的 `期初庫存 (Initial Inventory)` 寫入上的 `i_value` 欄位。該筆資料的 `p_value` 與 `s_value` 應設為 0。
+    - **目的**: 確保後端資料庫能正確記錄期初庫存值，供下次 `getPSIContext` 讀取時還原狀態。
