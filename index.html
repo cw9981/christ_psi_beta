@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Christ PSI 2026</title>
+    <title>Christ PSI - 庫存預測管理系統</title>
 
     <!-- Modular Styles -->
     <link rel="stylesheet" href="./css/global.css">
@@ -18,15 +18,20 @@
 
 <body>
 
-    <div id="global-loader">載入中...</div>
+    <div id="global-loader" class="loader-overlay" style="display: none;">
+        <div class="loader-spinner"></div>
+        <div class="loader-text">資料同步中...</div>
+    </div>
 
     <header>
-        <h1 id="app-title">Christ PSI - 2026</h1>
+        <div class="header-inner">
+            <h1 id="app-title">Christ PSI - 庫存預測管理系統</h1>
+        </div>
     </header>
 
     <main id="app-content">
         <!-- Module templates will be loaded here -->
-        <div style="text-align: center; padding: 5rem; color: #666;">系統初始化中...</div>
+        <div class="init-loading">系統初始化中...</div>
     </main>
 
     <footer>
@@ -45,8 +50,6 @@
     <script src="./js/detail.js"></script>
     <script src="./js/history.js"></script>
     <script src="./js/app.js"></script>
-    <!-- Test API (Remove or comment out in production) -->
-    <script src="./js/test_gas.js"></script>
 </body>
 
 </html>

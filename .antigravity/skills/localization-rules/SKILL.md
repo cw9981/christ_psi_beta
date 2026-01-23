@@ -24,15 +24,6 @@ description: 強制全站使用繁體中文 (Traditional Chinese) 的嚴格準�
 | **Inventory** | 庫存 |
 | **Production** | 預測到貨 (P) |
 | **Sales** | 預測銷售 (S) |
-| **Add** | 新增 |
-| **Edit** | 編輯 |
-| **Delete/Remove** | 刪除 |
-| **Save/Confirm** | 儲存 / 確認 |
-| **Cancel** | 取消 |
-| **Loading...** | 載入中... |
-| **Search** | 搜尋 |
-| **Filter** | 篩選 |
-| **Back** | 返回 |
 | **Showing X of Y** | 顯示 X 筆，共 Y 筆 |
 | **No data found** | 無符合資料 |
 

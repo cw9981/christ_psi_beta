@@ -5,8 +5,8 @@
 
 window.AppState = {
     products: [],      // Active PSI data from Sheets
-    clients: [],       // Client catalog from client.json
-    specs: [],         // Model catalog from products.json
+    clients: [],       // Client catalog
+    specs: [],         // Model catalog 
     currentProduct: null,
     currentDate: new Date()
 };
@@ -21,16 +21,15 @@ async function initAppShell() {
     // 1. Initial Data Load
     await loadBaseData();
 
-    // 2. Load Templates into Shell (This also initializes modules)
+    // 2. Load Templates into Shell
     await loadTemplates();
 }
 
 function updateHeaderTitle() {
     const titleEl = document.getElementById('app-title');
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = today.toLocaleString('zh-Hant', { month: 'long' });
-    titleEl.textContent = `Christ PSI - ${year} ${month}`;
+    if (titleEl) {
+        titleEl.textContent = `Christ PSI - 庫存預測管理系統`;
+    }
 }
 
 async function loadBaseData() {
@@ -61,10 +60,13 @@ async function loadTemplates() {
 
         container.innerHTML = homeHtml + detailHtml + historyHtml;
 
-        // Initialize Modules after templates are loaded
+        // Initialize Modules
         if (window.HomeModule) window.HomeModule.init();
         if (window.DetailModule) window.DetailModule.init();
         if (window.HistoryModule) window.HistoryModule.init();
+
+        // Show Home by default
+        window.AppRouter.showHome();
 
     } catch (e) {
         console.error("Template loading error:", e);
@@ -76,21 +78,30 @@ async function loadTemplates() {
 window.AppRouter = {
     showHome: () => {
         document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
-        document.getElementById('view-home').classList.add('active');
-        if (window.HomeModule) window.HomeModule.render();
+        const homeView = document.getElementById('view-home');
+        if (homeView) {
+            homeView.classList.add('active');
+            if (window.HomeModule) window.HomeModule.render();
+        }
     },
 
     showDetail: async (product) => {
         window.AppState.currentProduct = product;
         document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
-        document.getElementById('view-detail').classList.add('active');
-        if (window.DetailModule) await window.DetailModule.render();
+        const detailView = document.getElementById('view-detail');
+        if (detailView) {
+            detailView.classList.add('active');
+            if (window.DetailModule) await window.DetailModule.render();
+        }
     },
 
     showHistory: (product) => {
         window.AppState.currentProduct = product;
         document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
-        document.getElementById('view-history').classList.add('active');
-        if (window.HistoryModule) window.HistoryModule.show(product);
+        const historyView = document.getElementById('view-history');
+        if (historyView) {
+            historyView.classList.add('active');
+            if (window.HistoryModule) window.HistoryModule.show(product);
+        }
     }
 };

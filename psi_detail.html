@@ -2,19 +2,66 @@
 <section id="view-detail" class="view-section">
 
     <div class="detail-header">
-        <div>
-            <h2 id="detail-product-name">產品名稱</h2>
-            <div id="detail-client-name" style="color: var(--text-muted); margin-top: 0.3rem;">客戶名稱</div>
+        <div class="header-left">
+            <h2 id="detail-product-name">產品名稱 <span id="unsaved-indicator"
+                    style="display:none; color: var(--accent-color);">*</span></h2>
+            <div id="detail-client-name" class="subtitle">客戶名稱</div>
         </div>
-        <div style="display: flex; gap: 1rem;">
+        <div class="header-right">
             <button id="btn-back" class="btn-secondary">返回列表</button>
         </div>
     </div>
 
     <div class="psi-container">
-        <div class="form-group" style="max-width: 250px; margin-bottom: 2rem;">
-            <label for="detail-initial-inventory">期初庫存 (上月底):</label>
-            <input type="number" id="detail-initial-inventory" value="0">
+        <!-- Context Section: Previous Month Actuals (Display Only) -->
+        <div class="context-section-display" id="context-display-area" title="點擊編輯">
+
+            <!-- State 1: Initial State (New Product) - Right Aligned -->
+            <div id="ctx-display-initial" class="ctx-initial-layout" style="display:none;">
+                <div class="ctx-title-box">
+                    <span class="ctx-date" id="ctx-init-month">YYYY-MM</span>
+                    <h4>初始庫存設定</h4>
+                </div>
+                <div class="highlight-inv-box">
+                    <label>初始庫存 (Actual I)</label>
+                    <span class="inv-value" id="disp-init-i">0</span>
+                </div>
+            </div>
+
+            <!-- State 2: Normal State - Split Layout -->
+            <div id="ctx-display-normal" class="ctx-normal-layout" style="display:none;">
+                <div class="ctx-left-rows">
+                    <div class="ctx-date-header">上月實績 <span id="ctx-normal-month">YYYY-MM</span></div>
+
+                    <!-- Row 1: Forecast (Grey) -->
+                    <div class="ctx-row-forecast">
+                        <span class="row-label">預測 (Forecast)</span>
+                        <div class="row-metrics">
+                            <span>P: <span id="disp-norm-fp">0</span></span>
+                            <span>S: <span id="disp-norm-fs">0</span></span>
+                            <span>I: <span id="disp-norm-fi">0</span></span>
+                        </div>
+                    </div>
+
+                    <!-- Row 2: Actual (Primary) -->
+                    <div class="ctx-row-actual">
+                        <span class="row-label">實際 (Actual)</span>
+                        <div class="row-metrics">
+                            <span>P: <span id="disp-norm-ap" class="bold-primary">0</span></span>
+                            <span>S: <span id="disp-norm-as" class="bold-primary">0</span></span>
+                            <span>I: <span id="disp-norm-ai-row" class="bold-primary">0</span></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ctx-right-box">
+                    <div class="highlight-inv-box highlight-only">
+                        <label>初始庫存 (Actual I)</label>
+                        <span class="inv-value" id="disp-norm-ai">0</span>
+                        <div class="box-hint">點擊設定實績(P/S)</div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div id="psi-grid" class="psi-grid">
@@ -26,23 +73,63 @@
         <canvas id="psi-chart"></canvas>
     </div>
 
-    <!-- Edit Month Dialog -->
-    <dialog id="dialog-edit-month">
-        <h3>編輯 <span id="edit-month-title"></span> 數據</h3>
-        <form id="form-edit-month">
-            <div class="form-group">
-                <label for="edit-p">預測到貨 (P):</label>
-                <input type="number" id="edit-p" required>
-            </div>
-            <div class="form-group">
-                <label for="edit-s">預測銷售 (S):</label>
-                <input type="number" id="edit-s" required>
-            </div>
-            <div class="dialog-actions">
-                <button type="button" id="btn-cancel-edit" class="btn-secondary">取消</button>
-                <button type="submit" class="btn-primary">儲存修改</button>
-            </div>
-        </form>
+    <!-- Edit Forecast Dialog (Future Months) -->
+    <dialog id="dialog-edit-month" class="modal-dialog">
+        <div class="dialog-header">
+            <h3>編輯預測 - <span id="edit-month-title"></span></h3>
+        </div>
+        <div class="dialog-body">
+            <form id="form-edit-month">
+                <div class="form-group">
+                    <label for="edit-p">預測到貨 (P):</label>
+                    <input type="number" id="edit-p" required min="0">
+                </div>
+                <div class="form-group">
+                    <label for="edit-s">預測銷售 (S):</label>
+                    <input type="number" id="edit-s" required min="0">
+                </div>
+                <div id="edit-error-msg" class="error-message" style="display:none;"></div>
+                <div class="dialog-actions">
+                    <button type="button" id="btn-cancel-edit" class="btn-secondary">取消</button>
+                    <button type="submit" id="btn-save-edit" class="btn-primary">確認修改</button>
+                </div>
+            </form>
+        </div>
+    </dialog>
+
+    <!-- Edit Context Dialog (Previous Month Actuals) -->
+    <dialog id="dialog-edit-context" class="modal-dialog">
+        <div class="dialog-header">
+            <h3 id="ctx-dialog-title">編輯上月實績</h3>
+        </div>
+        <div class="dialog-body">
+            <form id="form-edit-context">
+                <!-- P/S Inputs (Show only if Normal Mode) -->
+                <div id="ctx-fields-ps">
+                    <div class="form-group">
+                        <label for="ctx-actual-p">實際到貨 (P):</label>
+                        <input type="number" id="ctx-actual-p" min="0" placeholder="輸入實際到貨">
+                    </div>
+                    <div class="form-group">
+                        <label for="ctx-actual-s">實際銷售 (S):</label>
+                        <input type="number" id="ctx-actual-s" min="0" placeholder="輸入實際銷售">
+                    </div>
+                </div>
+
+                <!-- I Input (Always shown) -->
+                <div class="form-group">
+                    <label for="ctx-actual-i">實際庫存 (I):</label>
+                    <input type="number" id="ctx-actual-i" required min="0" placeholder="輸入期末庫存">
+                </div>
+
+                <div id="ctx-error-msg" class="error-message" style="display:none;"></div>
+
+                <div class="dialog-actions">
+                    <button type="button" id="btn-cancel-ctx" class="btn-secondary">取消</button>
+                    <button type="submit" id="btn-save-ctx" class="btn-primary">確認修改</button>
+                </div>
+            </form>
+        </div>
     </dialog>
 
 </section>

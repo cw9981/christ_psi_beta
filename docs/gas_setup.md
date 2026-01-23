@@ -9,10 +9,13 @@
   - `Column A (client)`: 客戶名稱
   - `Column B (model_spec)`: 型號規格
   - `Column C (date_month)`: 日期月份 (YYYY-MM)
-  - `Column D (p_value)`: 預測到貨 (P)
-  - `Column E (s_value)`: 預測銷售 (S)
-  - `Column F (i_value)`: 庫存預測 (I)
-  - `Column G (last_updated)`: 最後更新時間
+  - `Column D (forecast_p)`: 預測到貨 (P)
+  - `Column E (forecast_s)`: 預測銷售 (S)
+  - `Column F (forecast_i)`: 庫存預測 (I)
+  - `Column G (actual_p)`: 實際到貨 (Actual P)
+  - `Column H (actual_s)`: 實際銷售 (Actual S)
+  - `Column I (actual_i)`: 實際庫存 (Actual I)
+  - `Column J (last_updated)`: 最後更新時間
 
 ## 2. API 說明與規範
 
@@ -21,7 +24,7 @@
 ### A. 取得半年PSI資料 (`getPSIContext`)
 用於「首頁產品總覽」與「PSI 詳情頁」。
 - **資料範圍**: 讀取 **上個月(Context)** + **當前及未來 5 個月(Forecast)**，共 7 個月的資料。
-- **目的**: 獲取上個月期末庫存 (`i_value`) 作為本月計算基礎，並顯示未來半年的趨勢。
+- **目的**: 獲取上個月期末庫存 (`actual_i`) 作為本月計算基礎，並顯示未來半年的趨勢。
 
 - **Method:** `GET`
 - **參數:**
@@ -53,9 +56,12 @@
         "client": "...",
         "model_spec": "...",
         "date_month": "YYYY-MM",
-        "p_value": 0,
-        "s_value": 0,
-        "i_value": 0
+        "forecast_p": 0,
+        "forecast_s": 0,
+        "forecast_i": 0,
+        "actual_p": 0,
+        "actual_s": 0,
+        "actual_i": 0
       },
       ...
     ]
@@ -84,8 +90,6 @@
 1. **跨年度資料儲存**: 同時寫入 2025 年底與 2026 年初的資料。
 2. **Context 讀取驗證**: 驗證是否能正確抓取上個月的期末庫存。
 3. **歷史資料查詢**: 驗證單一年度資料讀取。
-
-[點此查看測試腳本](file:///Users/dalek3/workspace/github-cw9981/christ_psi_202512/docs/test_psi_api.sh)
 
 **使用方式:**
 1. 打開 `docs/test_psi_api.sh`。

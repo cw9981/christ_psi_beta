@@ -1,9 +1,10 @@
 /**
  * Christ PSI System - API Layer
- * Adheres to: google-sheets-connector skill
+ * Updated: Supports Forecast vs Actual columns.
  */
 
 const API_CONFIG = {
+    // Replace with your actual deployed GAS Web App URL
     GAS_URL: 'https://script.google.com/macros/s/AKfycbw8EunSENH8YfMKzhfrzx5j5WvkjExglIWE-kzBrhHohXPtcykz0Q6s6o1uBfRPwad4/exec',
     USE_MOCK: false
 };
@@ -15,7 +16,6 @@ window.fetchModelSpecs = async function () {
         const res = await fetch('./data/products.json?v=' + Date.now());
         return await res.json();
     } catch (e) {
-        console.error("fetchModelSpecs error:", e);
         return [];
     }
 };
@@ -25,24 +25,19 @@ window.fetchClients = async function () {
         const res = await fetch('./data/client.json?v=' + Date.now());
         return await res.json();
     } catch (e) {
-        console.error("fetchClients error:", e);
         return [];
     }
 };
 
 /**
  * Fetch Home List (Active Products)
- * Consumes getPSIContext to get 7-month data (Previous + 6 Forecast)
  */
 window.fetchProducts = async function () {
     this.showLoading(true);
     try {
         if (API_CONFIG.USE_MOCK) {
-            // Mock data structure tailored for new logic
             return [
-                { id: '1', client: 'SUPERBOND', model_spec: 'D3450_250mm×100M', initialInventory: 120, monthsData: Array(6).fill({ p: 0, s: 0, i: 0 }) },
-                { id: '2', client: 'HUAQIN', model_spec: 'NP605_400mm×100M', initialInventory: 50, monthsData: Array(6).fill({ p: 0, s: 0, i: 0 }) },
-                { id: '3', client: 'AVARY', model_spec: 'T4000_1020mm×50M', initialInventory: 300, monthsData: Array(6).fill({ p: 0, s: 0, i: 0 }) },
+                { id: '1', client: 'MOCK', model_spec: 'DEMO', initialInventory: 100, monthsData: Array(6).fill({ p: 0, s: 0, i: 0 }) }
             ];
         }
 
@@ -58,12 +53,23 @@ window.fetchProducts = async function () {
             id: `${r.client}_${r.model_spec}`,
             client: r.client,
             model_spec: r.model_spec,
-            initialInventory: r.i_stock || 0,
+            // Use prev_item's Actual I value as current inventory start
+            initialInventory: (r.prev_item && r.prev_item.actual_i) || 0,
+            // Map full Context Data for Detail View
+            contextData: r.prev_item ? {
+                date_month: r.prev_item.date_month,
+                actual_p: r.prev_item.actual_p || 0,
+                actual_s: r.prev_item.actual_s || 0,
+                actual_i: r.prev_item.actual_i || 0,
+                forecast_p: r.prev_item.forecast_p || 0,
+                forecast_s: r.prev_item.forecast_s || 0,
+                forecast_i: r.prev_item.forecast_i || 0
+            } : null,
             monthsData: r.forecast_items.map(f => ({
                 date_month: f.date_month, // Keep date_month for reference
-                p: f.p_value,
-                s: f.s_value,
-                i: f.i_value
+                p: f.forecast_p,
+                s: f.forecast_s,
+                i: f.forecast_i
             }))
         }));
 
@@ -76,17 +82,15 @@ window.fetchProducts = async function () {
 };
 
 /**
- * Fetch 7 Months of PSI Data (Spanning Years)
+ * Fetch 7 Months of PSI Data
  */
 window.fetchContextPSI = async function (client, model_spec, startMonth) {
     this.showLoading(true);
     try {
-        if (API_CONFIG.USE_MOCK && window.fetchContextPSI_Mock) {
-            return await window.fetchContextPSI_Mock(client, model_spec, startMonth);
+        if (API_CONFIG.USE_MOCK) {
+            return null; // Mock handled in calling logic if needed or enhance here
         }
 
-        // New API takes startMonth, defaults to current if empty.
-        // It returns { data: [ResultObject] } where ResultObject has { i_stock, forecast_items }
         let url = `${API_CONFIG.GAS_URL}?action=getPSIContext&client=${encodeURIComponent(client)}&model_spec=${encodeURIComponent(model_spec)}`;
         if (startMonth) {
             url += `&startMonth=${startMonth}`;
@@ -94,21 +98,17 @@ window.fetchContextPSI = async function (client, model_spec, startMonth) {
 
         const response = await fetch(url);
         if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
-
         const json = await response.json();
+
         if (json.status === 'error') throw new Error(json.message);
 
         const records = json.data || [];
-        if (records.length === 0) return [];
-
-        // Return the full record object so consumers can access i_stock (Initial Inventory)
-        // Record structure: { client, model_spec, last_updated, i_stock, forecast_items }
+        if (records.length === 0) return null;
         return records[0];
 
     } catch (e) {
         alert('Data Load Failed: ' + e.message);
-        console.error(e);
-        return [];
+        return null;
     } finally {
         this.showLoading(false);
     }
@@ -120,74 +120,63 @@ window.fetchContextPSI = async function (client, model_spec, startMonth) {
 window.fetchYearlyHistory = async function (client, model_spec, year) {
     this.showLoading(true);
     try {
-        if (API_CONFIG.USE_MOCK && window.fetchYearlyHistory_Mock) {
-            return await window.fetchYearlyHistory_Mock(client, model_spec, year);
-        }
-
         const url = `${API_CONFIG.GAS_URL}?action=getPSIHistory&client=${encodeURIComponent(client)}&model_spec=${encodeURIComponent(model_spec)}&year=${year}`;
         const response = await fetch(url);
-        if (!response.ok) throw new Error(`HTTP 錯誤! 狀態碼: ${response.status}`);
-
         const data = await response.json();
         if (data.status === 'error') throw new Error(data.message);
         return data.history || [];
     } catch (e) {
-        alert('載入歷史失敗: ' + e.message);
-        console.error(e);
+        alert('History Load Failed: ' + e.message);
         return [];
     } finally {
         this.showLoading(false);
     }
 };
 
+/**
+ * Save PSI Data
+ * UPDATED: Uses forecast_*, actual_* fields
+ */
 window.saveProductData = async function (product) {
     this.showLoading(true);
     try {
         if (API_CONFIG.USE_MOCK) {
-            console.log("Mock Save:", product);
-            await new Promise(r => setTimeout(600));
+            await new Promise(r => setTimeout(500));
             return { status: 'success' };
         }
 
-        // Map product.monthsData back to rows for GAS
-        // Format: { date_month, p_value, s_value, i_value }
-        // monthsData in product has p, s, i, date? (Wait, fetchProducts maps date_month -> date_month, detail.js maps it to 'date' or keeps it?)
-        // In fetchProducts I kept date_month. In detail.js it maps to 'date' but might lose date_month if not careful.
-        // Let's check detail.js render again.
-        // detail.js uses `m.date`? No, it uses `getFutureMonths` for labels. 
-        // But `product.monthsData` needs to store the date string for saving!
+        // Create a single flat array of 7 PSI objects (1 Context + 6 Forecast)
+        const psiPayload = [];
 
-        // We must ensure product.monthsData has `date_month`.
-        // The fetchProducts mapping: `date_month: f.date_month`.
-        // So we are good.
-
-        const psiPayload = product.monthsData.map(m => ({
-            client: product.client,
-            model_spec: product.model_spec,
-            date_month: m.date_month,
-            p_value: m.p,
-            s_value: m.s,
-            i_value: m.i
-        }));
-
-        // Insert Previous Month Context (Initial Inventory)
-        if (psiPayload.length > 0) {
-            // Calculate previous month from the first forecast month
-            const firstDateStr = psiPayload[0].date_month; // YYYY-MM
-            const [y, m] = firstDateStr.split('-').map(Number);
-            // JS Date month is 0-indexed, so m-1. Previous month is m-2.
-            const d = new Date(y, m - 2, 1);
-            const prevMonthStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-
-            psiPayload.unshift({
+        // 1. Context Month (Index 0)
+        if (product.contextData) {
+            psiPayload.push({
                 client: product.client,
                 model_spec: product.model_spec,
-                date_month: prevMonthStr,
-                p_value: 0,
-                s_value: 0,
-                i_value: product.initialInventory || 0
+                date_month: product.contextData.date_month,
+                forecast_p: product.contextData.forecast_p || 0,
+                forecast_s: product.contextData.forecast_s || 0,
+                forecast_i: product.contextData.forecast_i || 0,
+                actual_p: product.contextData.actual_p || 0,
+                actual_s: product.contextData.actual_s || 0,
+                actual_i: product.contextData.actual_i || 0
             });
         }
+
+        // 2. Forecast Months (Index 1-6)
+        product.monthsData.forEach(m => {
+            psiPayload.push({
+                client: product.client,
+                model_spec: product.model_spec,
+                date_month: m.date_month,
+                forecast_p: m.p || 0,
+                forecast_s: m.s || 0,
+                forecast_i: m.i || 0,
+                actual_p: 0, // Actuals are for the past
+                actual_s: 0,
+                actual_i: 0
+            });
+        });
 
         const response = await fetch(API_CONFIG.GAS_URL, {
             method: 'POST',

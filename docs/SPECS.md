@@ -37,7 +37,7 @@ psi_history.html: 包含年度歷史視圖的表格。
 > **UI 規範:** 請參閱 `.antigravity/skills/psi-history-view/SKILL.md`
 
 - **功能:** 檢視特定產品在一整年度的 PSI 歷史數據。
-- **年度切換:** 支援下拉選單切換年份 (如 2024, 2025, 2026)。
+- **年度切換:** 左右按鈕 切換年份 (預設是今年 如 2024, 2025, 2026)。
 - **資料來源:** 從對應年度的 Sheet 分頁讀取。
 
 ### 4. 設計規範 (Design Guidelines)
@@ -53,10 +53,11 @@ psi_history.html: 包含年度歷史視圖的表格。
 本系統使用 Google Sheets 作為後端資料庫，透過 Google Apps Script (GAS) 進行 API 介接。
 
 ### 應用場景
-- 產品總覽 (Home List)：
-從 API 取得半年度 PSI 資料。資料包含兩個部分：
-上個月的 i_value：即庫存預測值 (I)。
-當前月份起連續六個月的 PSI 資料列表。
+- **產品總覽 (Home List)：**
+    - 從 API 取得半年度 PSI 資料。
+    - **Initial Inventory (期初庫存/上月實績)**：
+        - 來源：`上個月實際庫存 (Last Month Actual I)`。
+        - 機制：允許使用者於「詳細頁面」手動輸入/修正上個月的 `Actual P`, `Actual S`, `Actual I`。
 
 - 年度歷史視圖 (Yearly History)：
 從 API 取得完整年度的 PSI 歷史資料。
@@ -67,6 +68,7 @@ psi_history.html: 包含年度歷史視圖的表格。
 
 > [!IMPORTANT]
 > **[Google Apps Script 設定與部署指南](gas_setup.md)**
+> ** 程式碼規範:** 請參閱 `.antigravity/skills/GAS_API_Implementer/SKILL.md`
 
 ### 核心整合要求
 - **年度分頁:** 資料依年度 (如 `2025`, `2026`) 分頁儲存。

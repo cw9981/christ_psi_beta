@@ -25,7 +25,7 @@ description: 透過 Google Apps Script (GAS) 連接 Google Sheets 的專家指�
 
 4.  **錯誤處理**:
     - 檢查 `response.ok`。
-    - 若回應非 200 OK，或 JSON 內容包含錯誤字元，**必須** 以跳出視窗 (`alert`) 告知使用者錯誤訊息。
+    - 若回應非 200 OK，或 JSON 內容包含錯誤字元，**必須** 透過 UI 回饋 (如跳出視窗 `alert` 或產品自定義的 Toast/訊息框) 告知使用者錯誤訊息。
     - 使用 `console.error` 記錄詳細的調試資訊。
 
 ## 範例模式

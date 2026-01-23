@@ -1,62 +1,82 @@
-<!-- Home List Module Fragment -->
+<!-- Home Module -->
 <section id="view-home" class="view-section active">
 
-    <div class="controls">
-        <div class="form-group">
-            <label for="filter-client">客戶篩選:</label>
-            <select id="filter-client">
-                <option value="all">所有客戶</option>
-            </select>
+    <div class="home-toolbar">
+        <div class="toolbar-left">
+            <h2 id="current-month-display" style="margin: 0; font-size: 1.25rem; color: var(--primary-color);">YYYY 年 M
+                月</h2>
+            <div class="filter-group" style="display:flex; align-items:center; gap:0.5rem;">
+                <label for="filter-client" style="font-weight:600; color:var(--text-main);">客戶</label>
+                <select id="filter-client" class="form-select">
+                    <option value="">所有客戶</option>
+                    <!-- Options populated by JS -->
+                </select>
+            </div>
+            <span id="list-stats" class="list-stats">顯示 0 筆，共 0 筆</span>
         </div>
-        <div id="list-stats">載入中...</div>
-        <button id="btn-add-product" class="btn-primary" style="margin-left: auto;">新增產品</button>
+
+        <div class="toolbar-right">
+            <button id="btn-add-product" class="btn-primary">新增產品</button>
+        </div>
     </div>
 
-    <div class="table-container">
-        <table>
+    <div class="product-list-container">
+        <table class="data-table" id="product-table">
             <thead>
-                <tr id="product-list-header">
-                    <th>客戶 (Client)</th>
-                    <th>型號規格 (Model Spec)</th>
-                    <th>上月庫存 (Last Month Inv)</th>
-                    <!-- 6 Months headers will be injected here -->
-                    <!-- Dynamic headers for 6 months -->
-                    <th class="dynamic-month">Month 1</th>
-                    <th class="dynamic-month">Month 2</th>
-                    <th class="dynamic-month">Month 3</th>
-                    <th class="dynamic-month">Month 4</th>
-                    <th class="dynamic-month">Month 5</th>
-                    <th class="dynamic-month">Month 6</th>
-                    <th>動作 (Action)</th>
+                <tr>
+                    <th style="width: 5%; text-align: center;">狀態</th>
+                    <th style="width: 20%;">客戶</th>
+                    <th style="width: 35%;">型號規格</th>
+                    <th style="width: 15%; text-align: center;">庫存 (上月)</th>
+                    <th style="width: 25%; text-align: right; padding-right: 1.5rem;">操作</th>
                 </tr>
             </thead>
             <tbody id="product-list-body">
-                <!-- Rows injected by home.js -->
+                <!-- Javascript will populate this -->
             </tbody>
         </table>
+        <div id="home-empty-state" style="display:none; text-align: center; padding: 3rem; color: #888;">
+            查無資料
+        </div>
     </div>
 
     <!-- Add Product Dialog -->
-    <dialog id="dialog-add">
-        <h3>新增產品</h3>
-        <form id="form-add">
-            <div class="form-group">
-                <label for="add-client">客戶:</label>
-                <select id="add-client" required></select>
-            </div>
-            <div class="form-group">
-                <label for="add-model">型號規格:</label>
-                <select id="add-model" required></select>
-            </div>
-            <div class="form-group">
-                <label for="add-initial-inv">期初庫存 (上月底):</label>
-                <input type="number" id="add-initial-inv" value="0" required>
-            </div>
-            <div class="dialog-actions">
-                <button type="button" id="btn-cancel-add" class="btn-secondary">取消</button>
-                <button type="submit" class="btn-primary">確認新增</button>
-            </div>
-        </form>
+    <dialog id="dialog-add" class="modal-dialog">
+        <div class="dialog-header">
+            <h3>新增產品</h3>
+        </div>
+        <div class="dialog-body">
+            <form id="form-add-product">
+                <div class="form-group">
+                    <label for="add-client">客戶 <span class="required">*</span></label>
+                    <div class="input-with-action">
+                        <select id="add-client" required>
+                            <option value="" disabled selected>請選擇客戶</option>
+                            <!-- Populated by JS -->
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="add-model">型號規格 <span class="required">*</span></label>
+                    <div class="input-with-action">
+                        <select id="add-model" required>
+                            <option value="" disabled selected>請先選擇客戶</option>
+                            <!-- Populated by JS -->
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="add-inventory">實際庫存 (上月結餘) <span class="required">*</span></label>
+                    <input type="number" id="add-inventory" required min="0" value="0">
+                </div>
+                <div id="add-error-msg" class="error-message" style="display:none;"></div>
+
+                <div class="dialog-actions">
+                    <button type="button" id="btn-cancel-add" class="btn-secondary">取消</button>
+                    <button type="submit" class="btn-primary">新增</button>
+                </div>
+            </form>
+        </div>
     </dialog>
 
 </section>

@@ -2,35 +2,35 @@
 <section id="view-history" class="view-section">
 
     <div class="history-header">
-        <div>
-            <h2 id="history-title">年度歷史資料</h2>
-            <div id="history-subtitle" style="color: var(--text-muted); margin-top: 0.3rem;">載入中...</div>
+        <div class="header-left">
+            <h2 id="history-title">年度 PSI 歷史數據</h2>
+            <div id="history-product-info" class="subtitle">
+                <!-- Product Name -->
+            </div>
         </div>
         <div class="history-controls">
-            <select id="select-history-year">
-                <option value="2024">2024 年度</option>
-                <option value="2025">2025 年度</option>
-                <option value="2026" selected>2026 年度</option>
-            </select>
-            <button id="btn-history-back" class="btn-secondary">返回詳情</button>
+            <div class="year-selector">
+                <button id="btn-prev-year" class="btn-icon">&lt;</button>
+                <span id="display-year">2026</span>
+                <button id="btn-next-year" class="btn-icon">&gt;</button>
+            </div>
+            <button id="btn-back-from-history" class="btn-secondary">返回列表</button>
         </div>
     </div>
 
-    <div class="table-container">
-        <table>
-            <thead>
-                <tr>
-                    <th>月份</th>
-                    <th>預測到貨 (P)</th>
-                    <th>預測銷售 (S)</th>
-                    <th>庫存預測 (I)</th>
-                    <th>最後更新時間</th>
-                </tr>
-            </thead>
-            <tbody id="history-table-body">
-                <!-- Data injected by history.js -->
-            </tbody>
-        </table>
+    <div class="history-content">
+        <!-- Horizontal Grid for 12 months -->
+        <div id="history-grid" class="psi-grid history-grid-layout">
+            <!-- Populated by JS -->
+        </div>
+        <div id="history-empty" style="display:none; text-align:center; padding:3rem; color:#888;">
+            此年度無數據
+        </div>
+    </div>
+
+    <div class="chart-container"
+        style="margin-top: 2rem; background: var(--card-bg); padding: 1.5rem; border-radius: 8px; box-shadow: var(--shadow-subtle);">
+        <canvas id="history-chart"></canvas>
     </div>
 
 </section>
